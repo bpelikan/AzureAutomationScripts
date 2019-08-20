@@ -24,14 +24,17 @@ workflow PeriodicallyDeleteResourceGroups
         }
     }
 
-    Write-Output "--------------"
+    Write-Output "--------------" 
+    Get-Date -Format o
     $azrg = Get-AzureRmResourceGroup
     foreach -parallel ($rg in $azrg) 
     { 
-        if($rg.Tags["Locked"] -ne "yes")
+        if($rg.Tags.count -eq 0 -Or ($rg.Tags.count -ne 0 -And $rg.Tags["Locked"] -ne "yes"))
         {
             Write-Output ("Removing: " + $rg.ResourceGroupName)
             Remove-AzureRmResourceGroup -Name $rg.ResourceGroupName -Force
         }
     }
+    Write-Output "--------------" 
+    Get-Date -Format o
 }
