@@ -38,7 +38,7 @@ workflow PeriodicallyDeleteResourceGroups
     { 
         if($rg.Tags.count -eq 0 -Or ($rg.Tags.count -ne 0 -And $rg.Tags["Locked"] -ne "yes"))
         {
-            Write-Output ("Removing: " + $rg.ResourceGroupName)
+            Write-Output ("Removing resource group: `"" + $rg.ResourceGroupName + "`"")
             Remove-AzureRmResourceGroup -Name $rg.ResourceGroupName -Force
         }
     }
