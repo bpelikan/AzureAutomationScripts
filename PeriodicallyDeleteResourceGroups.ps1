@@ -1,5 +1,8 @@
 workflow PeriodicallyDeleteResourceGroups
 {
+    Write-Output "---------Logging in...---------"
+    Get-Date -Format o
+    Write-Output "-------------------------------"
     $connectionName = "AzureRunAsConnection"
     try
     {
@@ -23,9 +26,13 @@ workflow PeriodicallyDeleteResourceGroups
             throw $_.Exception
         }
     }
-
-    Write-Output "--------------" 
+    Write-Output "---------Logged in---------"
     Get-Date -Format o
+    Write-Output "---------------------------"
+
+    Write-Output "---------Starting deleting...---------"
+    Get-Date -Format o
+    Write-Output "--------------------------------------"
     $azrg = Get-AzureRmResourceGroup
     foreach -parallel ($rg in $azrg) 
     { 
@@ -35,6 +42,7 @@ workflow PeriodicallyDeleteResourceGroups
             Remove-AzureRmResourceGroup -Name $rg.ResourceGroupName -Force
         }
     }
-    Write-Output "--------------" 
+    Write-Output "---------Deleting finished---------"
     Get-Date -Format o
+    Write-Output "-----------------------------------"
 }
