@@ -1,38 +1,26 @@
 workflow PeriodicallyDeleteResourceGroups
 {
     Write-Output "---------Logging in...---------"
-    Get-Date -Format o
+	Get-Date -Format o
     Write-Output "-------------------------------"
-    $connectionName = "AzureRunAsConnection"
+
     try
     {
-        # Get the connection "AzureRunAsConnection "
-        $servicePrincipalConnection=Get-AutomationConnection -Name $connectionName         
-
         "Logging in to Azure..."
-        Add-AzureRmAccount `
-            -ServicePrincipal `
-            -TenantId $servicePrincipalConnection.TenantId `
-            -ApplicationId $servicePrincipalConnection.ApplicationId `
-            -CertificateThumbprint $servicePrincipalConnection.CertificateThumbprint 
+        Connect-AzureRMAccount –Identity
+        Write-Output "---------Logged in---------"
+        Get-Date -Format o
+        Write-Output "---------------------------"
     }
     catch {
-        if (!$servicePrincipalConnection)
-        {
-            $ErrorMessage = "Connection $connectionName not found."
-            throw $ErrorMessage
-        } else{
-            Write-Error -Message $_.Exception
-            throw $_.Exception
-        }
+        Write-Error -Message $_.Exception
+        throw $_.Exception
     }
-    Write-Output "---------Logged in---------"
-    Get-Date -Format o
-    Write-Output "---------------------------"
-
+    
     Write-Output "---------Starting deleting...---------"
-    Get-Date -Format o
+	Get-Date -Format o
     Write-Output "--------------------------------------"
+    
     $azrg = Get-AzureRmResourceGroup
     foreach -parallel ($rg in $azrg) 
     { 
@@ -43,6 +31,6 @@ workflow PeriodicallyDeleteResourceGroups
         }
     }
     Write-Output "---------Deleting finished---------"
-    Get-Date -Format o
+	Get-Date -Format o
     Write-Output "-----------------------------------"
 }
